@@ -29,6 +29,7 @@ public final class Constants {
     final public static double autonomousTurnSpeed = .3;
 
     //Arm
+    public static final int arm = 0;
     final public static double armHoldUp = 0.08;
     final public static double armHoldDown = 0.13;
     final public static double armTravel = 0.5;
@@ -41,8 +42,13 @@ public final class Constants {
     final public static boolean goForAuto = false;
 
     //hangar
-    final public static int hangarMotor = 00;
+    final public static int hangarMotor1 = 00;
+    final public static int hangarMotor2 = 00;
 
     //motor speeds
     final public static double intakeSpeed = .25;
+    final public static double hangarSpeed = .25;
+
+   
+
 }

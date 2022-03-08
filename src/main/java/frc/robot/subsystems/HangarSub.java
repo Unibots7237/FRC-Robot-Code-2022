@@ -7,16 +7,34 @@ package frc.robot.subsystems;
 import com.ctre.phoenix.motorcontrol.can.WPI_TalonSRX;
 
 import edu.wpi.first.wpilibj.Timer;
+import edu.wpi.first.wpilibj.XboxController;
+import edu.wpi.first.wpilibj.motorcontrol.MotorControllerGroup;
+import edu.wpi.first.wpilibj.motorcontrol.PWMSparkMax;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants;
+import frc.robot.Robot;
 
 public class HangarSub extends SubsystemBase {
-  public WPI_TalonSRX hangarMotor = new WPI_TalonSRX(Constants.hangarMotor);
+  public PWMSparkMax hangarMotor1 = new PWMSparkMax(Constants.hangarMotor1);
+  public PWMSparkMax hangarMotor2 = new PWMSparkMax(Constants.hangarMotor2);
+
+  public MotorControllerGroup hangarmotorgroup = new MotorControllerGroup(hangarMotor1, hangarMotor2);
   
+
+  XboxController xboxcontroller = Robot.m_robotContainer.xboxcontroller;
+
   public HangarSub() {}
 
-  public void extendHangar() {
-      hangarMotor.set(Constants.hangarMotor);
+  public void hangarControl() {
+    if(xboxcontroller.getRightBumperPressed()) {
+      hangarmotorgroup.set(Constants.intakeSpeed);
+    }
+    else if(xboxcontroller.getLeftBumperPressed()){
+      hangarmotorgroup.set(-Constants.hangarSpeed);
+    }
+    else{
+      hangarmotorgroup.set(0);
+    }
   }
   
 }

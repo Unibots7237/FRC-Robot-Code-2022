@@ -36,9 +36,7 @@ public class Hangar extends CommandBase {
   // Called every time the scheduler runs while the command is scheduled.
   @Override
   public void execute() {
-      if (timer.get() <= .25) {
-          this.hangarsub.extendHangar();
-      }
+    this.hangarsub.hangarControl();
   }
 
   // Called once the command ends or is interrupted.

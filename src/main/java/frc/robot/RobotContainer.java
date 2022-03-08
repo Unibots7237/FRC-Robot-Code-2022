@@ -48,6 +48,7 @@ public class RobotContainer {
   public final Limelight limelight = new Limelight();
 
   public final HangarSub hangarsub = new HangarSub();
+  public final Hangar hangarcommand = new Hangar(hangarsub);
 
   public final AutonomousSub autonomoussub = new AutonomousSub();
   private final Autonomous autonomouscommand = new Autonomous(autonomoussub, drivebasesub, limelight);
@@ -67,8 +68,8 @@ public class RobotContainer {
     // Configure the button bindings
     configureButtonBindings();
     drivebasesub.setDefaultCommand(drivebasecommand);
-    //intakesub.setDefaultCommand(intakecommand);
-    
+    intakesub.setDefaultCommand(intakecommand);
+    hangarsub.setDefaultCommand(hangarcommand);
   }
 
   /**
