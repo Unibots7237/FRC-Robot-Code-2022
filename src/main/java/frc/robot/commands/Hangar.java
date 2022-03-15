@@ -18,8 +18,6 @@ public class Hangar extends CommandBase {
   @SuppressWarnings({"PMD.UnusedPrivateField", "PMD.SingularField"})
   private final HangarSub hangarsub;
 
-  public Timer timer = new Timer();
-
   /**
    * Creates a new ExampleCommand.
    *
