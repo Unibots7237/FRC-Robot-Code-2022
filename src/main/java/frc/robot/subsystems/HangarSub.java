@@ -5,7 +5,11 @@
 package frc.robot.subsystems;
 
 import com.ctre.phoenix.motorcontrol.can.WPI_TalonSRX;
+import com.revrobotics.CANSparkMax;
+import com.revrobotics.RelativeEncoder;
+import com.revrobotics.CANSparkMaxLowLevel.MotorType;
 
+import edu.wpi.first.wpilibj.Encoder;
 import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.XboxController;
 import edu.wpi.first.wpilibj.motorcontrol.MotorControllerGroup;
@@ -15,8 +19,11 @@ import frc.robot.Constants;
 import frc.robot.Robot;
 
 public class HangarSub extends SubsystemBase {
-  public PWMSparkMax hangarMotor1 = new PWMSparkMax(Constants.hangarMotor1);
-  public PWMSparkMax hangarMotor2 = new PWMSparkMax(Constants.hangarMotor2);
+  public CANSparkMax hangarMotor1 = new CANSparkMax(Constants.hangarMotor1, MotorType.kBrushless);
+  public CANSparkMax hangarMotor2 = new CANSparkMax(Constants.hangarMotor2, MotorType.kBrushless);
+
+  public RelativeEncoder hangarEncoder1 = hangarMotor1.getEncoder();
+  public RelativeEncoder hangarEncoder2 = hangarMotor2.getEncoder();
 
   public MotorControllerGroup hangarmotorgroup = new MotorControllerGroup(hangarMotor1, hangarMotor2);
   
@@ -25,17 +32,12 @@ public class HangarSub extends SubsystemBase {
 
   public HangarSub() {}
 
-  public void hangarControl() {
-    if(xboxcontroller.getRightBumperPressed()) {
-      hangarmotorgroup.set(Constants.intakeSpeed);
-    }
-    else if(xboxcontroller.getLeftBumperPressed()){
-      hangarmotorgroup.set(-Constants.hangarSpeed);
-    }
-    else{
-      hangarmotorgroup.set(0);
-    }
+  public void hangarMotor1Move(double move) {
+    hangarMotor1.set(move);
   }
-  
+  public void hangarMotor2Move(double move) {
+    hangarMotor2.set(move);
+  }
+
 }
                                          

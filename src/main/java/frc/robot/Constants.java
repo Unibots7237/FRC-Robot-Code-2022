@@ -17,19 +17,20 @@ public final class Constants {
     final public static int xboxcontroller = 0;
 
     //Motors
-    final public static int frontRightTalon = 03;
-    final public static int backRightTalon = 02;
-    final public static int frontLeftTalon = 01;
-    final public static int backLeftTalon = 04;
+    final public static int frontRightTalon = 02;
+    final public static int backRightTalon = 03;
+    final public static int frontLeftTalon = 04;
+    final public static int backLeftTalon = 01;
     final public static int intakeSpark = 01;
     final public static int armSpark = 00;
+    final public static int hangarMotor1 = 00;
+    final public static int hangarMotor2 = 00;
 
     //autonomous
     final public static double autonomousSpeed = .5;
     final public static double autonomousTurnSpeed = .3;
 
     //Arm
-    public static final int arm = 0;
     final public static double armHoldUp = 0.08;
     final public static double armHoldDown = 0.13;
     final public static double armTravel = 0.5;
@@ -41,14 +42,12 @@ public final class Constants {
     final public static double autoStart = 0;
     final public static boolean goForAuto = false;
 
-    //hangar
-    final public static int hangarMotor1 = 00;
-    final public static int hangarMotor2 = 00;
-
     //motor speeds
     final public static double intakeSpeed = .25;
     final public static double hangarSpeed = .25;
 
    
+    //hangar stuff
+    final public static double hangarEncoderExtend = 0;
 
 }

@@ -4,8 +4,12 @@
 
 package frc.robot.commands;
 
+import frc.robot.Constants;
 import frc.robot.subsystems.ExampleSubsystem;
 import frc.robot.subsystems.HangarSub;
+
+import com.revrobotics.RelativeEncoder;
+
 import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj2.command.CommandBase;
 
@@ -29,14 +33,24 @@ public class Hangar extends CommandBase {
 
   // Called when the command is initially scheduled.
   @Override
-  public void initialize() {
-      timer.start();
+  public void initialize(){
+      
   }
 
   // Called every time the scheduler runs while the command is scheduled.
   @Override
   public void execute() {
-    this.hangarsub.hangarControl();
+    RelativeEncoder hangarEncoder1 = hangarsub.hangarEncoder1;
+    RelativeEncoder hangarEncoder2 = hangarsub.hangarEncoder2;
+
+    while (hangarEncoder1.getPosition() <= Constants.hangarEncoderExtend && hangarEncoder2.getPosition() <= Constants.hangarEncoderExtend) {
+      if (hangarEncoder1.getPosition() <= Constants.hangarEncoderExtend) {
+        hangarsub.hangarMotor1Move(Constants.hangarSpeed);
+      } else{hangarsub.hangarMotor1Move(0.0);}
+      if (hangarEncoder2.getPosition() <= Constants.hangarEncoderExtend) {
+        hangarsub.hangarMotor2Move(Constants.hangarSpeed);
+      } else{hangarsub.hangarMotor2Move(0.0);}
+    } 
   }
 
   // Called once the command ends or is interrupted.

@@ -1,15 +1,17 @@
 package frc.robot.subsystems;
 
-import com.ctre.phoenix.motorcontrol.can.WPI_TalonSRX;
+import com.revrobotics.CANSparkMax;
+import com.revrobotics.CANSparkMaxLowLevel.MotorType;
 
 import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.XboxController;
+import edu.wpi.first.wpilibj.motorcontrol.PWMSparkMax;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants;
 import frc.robot.RobotContainer;
 
 public class Arm extends SubsystemBase {
-    public WPI_TalonSRX arm = new WPI_TalonSRX(Constants.armTalon);
+    public CANSparkMax arm = new CANSparkMax(Constants.armSpark, MotorType.kBrushless);
     
     XboxController xboxcontroller = RobotContainer.xboxcontroller;
     
