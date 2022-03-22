@@ -13,11 +13,13 @@ import edu.wpi.first.wpilibj.Joystick;
 import edu.wpi.first.wpilibj.XboxController;
 import edu.wpi.first.wpilibj.PS4Controller.Button;
 import edu.wpi.first.wpilibj.simulation.XboxControllerSim;
+import frc.robot.commands.ArmCommand;
 import frc.robot.commands.Autonomous;
 import frc.robot.commands.Drivebase;
 import frc.robot.commands.ExampleCommand;
 import frc.robot.commands.Hangar;
 import frc.robot.commands.IntakeCommand;
+import frc.robot.subsystems.Arm;
 //import frc.robot.commands.IntakeCommand;
 import frc.robot.subsystems.AutonomousSub;
 import frc.robot.subsystems.DrivebaseSub;
@@ -42,8 +44,13 @@ public class RobotContainer {
   private final ExampleSubsystem m_exampleSubsystem = new ExampleSubsystem();
   private final ExampleCommand m_autoCommand = new ExampleCommand(m_exampleSubsystem);
 
+  public final Intake intakesub = new Intake();
+
   public final DrivebaseSub drivebasesub = new DrivebaseSub();
   private final Drivebase drivebasecommand = new Drivebase(drivebasesub);
+
+  private final Arm armsub = new Arm();
+  private final ArmCommand armcommand = new ArmCommand(armsub);
 
   public final Limelight limelight = new Limelight();
 
@@ -53,7 +60,6 @@ public class RobotContainer {
   public final AutonomousSub autonomoussub = new AutonomousSub();
   private final Autonomous autonomouscommand = new Autonomous(autonomoussub, drivebasesub, limelight);
 
-  public final Intake intakesub = new Intake();
   private final IntakeCommand intakecommand = new IntakeCommand(intakesub);
 
   public static XboxController xboxcontroller = new XboxController(Constants.xboxcontroller);
@@ -70,6 +76,7 @@ public class RobotContainer {
     drivebasesub.setDefaultCommand(drivebasecommand);
     intakesub.setDefaultCommand(intakecommand);
     //hangarsub.setDefaultCommand(hangarcommand);
+    armsub.setDefaultCommand(armcommand);
   }
 
   /**

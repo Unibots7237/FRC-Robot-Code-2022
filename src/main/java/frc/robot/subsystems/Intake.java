@@ -15,10 +15,10 @@ public class Intake extends SubsystemBase {
     XboxController xboxcontroller = Robot.m_robotContainer.xboxcontroller;
 
     public void intakeControl() {
-        if(xboxcontroller.getAButtonPressed()){
+        if(xboxcontroller.getAButton()){
             intake.set(Constants.intakeSpeed);
         }
-        else if(xboxcontroller.getYButtonPressed()){
+        else if(xboxcontroller.getYButton()){
             intake.set(-Constants.intakeSpeed);
         }
         else{

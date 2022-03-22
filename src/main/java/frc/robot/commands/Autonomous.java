@@ -29,7 +29,7 @@ public class Autonomous extends CommandBase {
     public boolean starting; //when it moves back in the beginning
  
      //true makes it turn right 90 degrees, false means no turn
-     private boolean findCargo;
+     private boolean startPathweaver;
 
     public Autonomous(AutonomousSub autonomoussub1, DrivebaseSub drivebasesub1, Limelight limelight1) {
         autonomoussub = autonomoussub1;
@@ -49,7 +49,7 @@ public class Autonomous extends CommandBase {
         rightEncoder.setQuadraturePosition(0,0);
         this.movingForward = true;
         this.starting = true;
-        this.findCargo = false;
+        this.startPathweaver = false;
     }
   
     // Called every time the scheduler runs while the command is scheduled.
@@ -64,33 +64,31 @@ public class Autonomous extends CommandBase {
         
 
         if (starting) {
-            /*
-            if (leftEncoderValue > -15000) {
+            
+            if (leftEncoderValue > 5000) {
                 this.drivebasesub.driveLeft(-Constants.autonomousSpeed);
             }
-            if (rightEncoderValue > -15000) {
+            if (rightEncoderValue > 5000) {
                 this.drivebasesub.driveRight(Constants.autonomousSpeed);
             }
-            if (leftEncoderValue <= -15000 && rightEncoderValue <= -15000) {
+            if (leftEncoderValue >= 5000 && rightEncoderValue >= 5000) {
                 this.drivebasesub.encoderLeft.setQuadraturePosition(0, 0);
                 this.drivebasesub.encoderRight.setQuadraturePosition(0, 0);
                 starting = false;
-                findCargo = true;
+                startPathweaver = true;
             }
-            */
-            findCargo = true;
          }
-        if (findCargo) {
-            if (this.limelight.haveValidTarget() == false) {
-                if (this.limelight.horizontalOffset() < 0.0) {
-                    System.out.println("negative degree");
-                }
-                if (this.limelight.horizontalOffset() > 0.5) {
-                    System.out.println("positive degree");
-                }
-                if (this.limelight.horizontalOffset() <= 0.5 && this.limelight.horizontalOffset() >= 0.0) {
-                   System.out.println("move forward"); 
-                }
+        if (startPathweaver) {
+            if (leftEncoderValue > -20000) {
+                this.drivebasesub.driveLeft(-Constants.autonomousSpeed);
+            }
+            if (rightEncoderValue > -20000) {
+                this.drivebasesub.driveRight(Constants.autonomousSpeed);
+            }
+            if (leftEncoderValue <= -20000 && rightEncoderValue <= -20000) {
+                this.drivebasesub.encoderLeft.setQuadraturePosition(0, 0);
+                this.drivebasesub.encoderRight.setQuadraturePosition(0, 0);
+                starting = false;
             }
         }
     }
