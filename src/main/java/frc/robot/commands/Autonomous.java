@@ -6,6 +6,7 @@ import frc.robot.subsystems.Limelight;
 
 import com.ctre.phoenix.motorcontrol.SensorCollection;
 import com.fasterxml.jackson.databind.JsonSerializable.Base;
+import com.kauailabs.navx.frc.AHRS;
 
 import edu.wpi.first.wpilibj2.command.CommandBase;
 import edu.wpi.first.wpilibj2.command.Subsystem;
@@ -25,11 +26,14 @@ public class Autonomous extends CommandBase {
     private SensorCollection leftEncoder;
     private SensorCollection rightEncoder;
 
+    private AHRS gyro;
+
     public boolean movingForward;
     public boolean starting; //when it moves back in the beginning
+    public boolean turn180 
  
      //true makes it turn right 90 degrees, false means no turn
-     private boolean startPathweaver;
+    private boolean startPathweaver;
 
     public Autonomous(AutonomousSub autonomoussub1, DrivebaseSub drivebasesub1, Limelight limelight1) {
         autonomoussub = autonomoussub1;
@@ -41,6 +45,7 @@ public class Autonomous extends CommandBase {
         this.leftEncoder = drivebasesub.encoderLeft;
         this.rightEncoder = drivebasesub.encoderRight;
         this.limelight = limelight;
+        this.gyro = RobotContainer.gyro;
     }
     
     @Override
@@ -50,6 +55,7 @@ public class Autonomous extends CommandBase {
         this.movingForward = true;
         this.starting = true;
         this.startPathweaver = false;
+        this.turn180 = false;
     }
   
     // Called every time the scheduler runs while the command is scheduled.
@@ -64,7 +70,7 @@ public class Autonomous extends CommandBase {
         
 
         if (starting) {
-            
+            gyro.reset();
             if (leftEncoderValue > 5000) {
                 this.drivebasesub.driveLeft(-Constants.autonomousSpeed);
             }
@@ -74,8 +80,17 @@ public class Autonomous extends CommandBase {
             if (leftEncoderValue >= 5000 && rightEncoderValue >= 5000) {
                 this.drivebasesub.encoderLeft.setQuadraturePosition(0, 0);
                 this.drivebasesub.encoderRight.setQuadraturePosition(0, 0);
-                starting = false;
-                startPathweaver = true;
+                turn180 = true;
+            }
+            if (turn180) {
+                if (gyro.getAngle() < 180) {
+                    this.autonomoussub.driveLeft(Constants.autonomousTurnSpeed)
+                }
+                if (gyro.getAngle() >= 180) {
+                    gyro.reset();
+                    starting = false;
+                    startPathweaver = true;
+                }
             }
          }
         if (startPathweaver) {
