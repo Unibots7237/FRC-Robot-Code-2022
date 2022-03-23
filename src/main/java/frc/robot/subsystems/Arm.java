@@ -16,18 +16,51 @@ public class Arm extends SubsystemBase {
     
     XboxController xboxcontroller = RobotContainer.xboxcontroller;
     
+    public static boolean dropDown = false;
+    public static boolean controlledDescent = false;
+
+    private Timer timer = new Timer();
+
     public boolean armUp = false;
     public double lastBurstTime = 0;
 
     public void armControl() {
       if (xboxcontroller.getBButton()) {
-        arm.set(Constants.armRise);
+        if (!dropDown) {
+          timer.reset();
+          timer.start();  
+          dropDown = true;         
+        }
       }
       if (xboxcontroller.getXButton()) {
-        arm.set(Constants.armDescend);   
+        if (!dropDown) {
+          arm.set(Constants.armRise);   
+        }
       }
       if (!xboxcontroller.getBButton() && !xboxcontroller.getXButton()) {
         arm.set(0);
+      }
+
+      if (dropDown) {
+        if (timer.get() <= .05) {
+          arm.set(Constants.armDescend);
+        }
+        if (timer.get() > .05) {
+          dropDown = false;
+          controlledDescent = true;
+        }
+      }
+      if (controlledDescent) {
+        timer.reset();
+        if (timer.get() <= 1.0) {
+          arm.set(Constants.armControlledDescent);
+        }
+        if (timer.get() > 1.0) {
+          timer.stop();
+          timer.reset();
+          controlledDescent = false;
+          dropDown = false;
+        }
       }
 
       /*

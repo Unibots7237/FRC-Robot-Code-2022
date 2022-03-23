@@ -2,6 +2,7 @@ package frc.robot.commands;
 import frc.robot.*;
 import frc.robot.subsystems.AutonomousSub;
 import frc.robot.subsystems.DrivebaseSub;
+import frc.robot.subsystems.Intake;
 import frc.robot.subsystems.Limelight;
 
 import com.ctre.phoenix.motorcontrol.SensorCollection;
@@ -11,6 +12,7 @@ import com.kauailabs.navx.frc.AHRS;
 import edu.wpi.first.wpilibj2.command.CommandBase;
 import edu.wpi.first.wpilibj2.command.Subsystem;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
+import edu.wpi.first.wpilibj.AnalogGyro;
 import edu.wpi.first.wpilibj.Joystick;
 import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
@@ -21,30 +23,33 @@ public class Autonomous extends CommandBase {
 
     private DrivebaseSub drivebasesub;
     private AutonomousSub autonomoussub;
-    private Limelight limelight;
+    private Intake intakesub;
+   //private Limelight limelight;
 
     private SensorCollection leftEncoder;
     private SensorCollection rightEncoder;
 
-    private AHRS gyro;
+    private Timer timer = new Timer();
+
+    private AnalogGyro gyro;
 
     public boolean movingForward;
     public boolean starting; //when it moves back in the beginning
-    public boolean turn180 
+    public boolean turn180;
+    public boolean shootIntake;
  
      //true makes it turn right 90 degrees, false means no turn
     private boolean startPathweaver;
 
-    public Autonomous(AutonomousSub autonomoussub1, DrivebaseSub drivebasesub1, Limelight limelight1) {
+    public Autonomous(AutonomousSub autonomoussub1, DrivebaseSub drivebasesub1, Intake intake1) {
         autonomoussub = autonomoussub1;
         drivebasesub = drivebasesub1;
-        limelight = limelight1;
+        intakesub = intake1;
         addRequirements(this.autonomoussub);
         addRequirements(this.drivebasesub);
-        addRequirements(this.limelight);
+        addRequirements(this.intakesub);
         this.leftEncoder = drivebasesub.encoderLeft;
         this.rightEncoder = drivebasesub.encoderRight;
-        this.limelight = limelight;
         this.gyro = RobotContainer.gyro;
     }
     
@@ -56,11 +61,13 @@ public class Autonomous extends CommandBase {
         this.starting = true;
         this.startPathweaver = false;
         this.turn180 = false;
+        this.shootIntake = false;
     }
   
     // Called every time the scheduler runs while the command is scheduled.
     @Override
     public void execute() {
+        
         double leftEncoderValue = leftEncoder.getQuadraturePosition();
         double rightEncoderValue = -rightEncoder.getQuadraturePosition();
 
@@ -80,11 +87,23 @@ public class Autonomous extends CommandBase {
             if (leftEncoderValue >= 5000 && rightEncoderValue >= 5000) {
                 this.drivebasesub.encoderLeft.setQuadraturePosition(0, 0);
                 this.drivebasesub.encoderRight.setQuadraturePosition(0, 0);
-                turn180 = true;
+                shootIntake = true;
+            }
+            if (shootIntake) {
+                timer.reset();
+                timer.start();
+                if (timer.get() <= 1.0) {
+                    this.intakesub.autonomousShoot();
+                }
+                if (timer.get() > 1.0) {
+                    timer.stop();
+                    timer.reset();
+                    turn180 = true;
+                }
             }
             if (turn180) {
                 if (gyro.getAngle() < 180) {
-                    this.autonomoussub.driveLeft(Constants.autonomousTurnSpeed)
+                    this.autonomoussub.driveRight(Constants.autonomousTurnSpeed);
                 }
                 if (gyro.getAngle() >= 180) {
                     gyro.reset();
@@ -93,6 +112,7 @@ public class Autonomous extends CommandBase {
                 }
             }
          }
+         /*
         if (startPathweaver) {
             if (leftEncoderValue > -20000) {
                 this.drivebasesub.driveLeft(-Constants.autonomousSpeed);
@@ -106,6 +126,7 @@ public class Autonomous extends CommandBase {
                 starting = false;
             }
         }
+        */
     }
 
     // Called once the command ends or is interrupted.

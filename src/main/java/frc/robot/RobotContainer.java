@@ -8,6 +8,7 @@ import javax.sound.midi.MidiSystem;
 
 import com.kauailabs.navx.frc.AHRS;
 
+import edu.wpi.first.wpilibj.AnalogGyro;
 import edu.wpi.first.wpilibj.GenericHID;
 import edu.wpi.first.wpilibj.Joystick;
 import edu.wpi.first.wpilibj.XboxController;
@@ -64,12 +65,12 @@ public class RobotContainer {
 
   public static XboxController xboxcontroller = new XboxController(Constants.xboxcontroller);
 
-  //public static AHRS gyro = new AHRS(Port.kUSB);
+  public static AnalogGyro gyro = new AnalogGyro(0);
 
   /** The container for the robot. Contains subsystems, OI devices, and commands. */
   public RobotContainer() {
     //Gyro
-    //gyro.reset();
+    gyro.reset();
 
     // Configure the button bindings
     configureButtonBindings();

@@ -26,4 +26,8 @@ public class Intake extends SubsystemBase {
         }
     }
 
+    public void autonomousShoot() {
+        intake.set(-Constants.intakeSpeed);
+    }
+
 }
