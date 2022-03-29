@@ -59,7 +59,7 @@ public class RobotContainer {
   //public final Hangar hangarcommand = new Hangar(hangarsub);
 
   public final AutonomousSub autonomoussub = new AutonomousSub();
-  private final Autonomous autonomouscommand = new Autonomous(autonomoussub, drivebasesub, limelight);
+  private final Autonomous autonomouscommand = new Autonomous(autonomoussub, drivebasesub, intakesub);
 
   private final IntakeCommand intakecommand = new IntakeCommand(intakesub);
 

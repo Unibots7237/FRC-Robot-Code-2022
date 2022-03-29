@@ -27,7 +27,7 @@ public final class Constants {
     final public static int hangarMotor2 = 00;
 
     //autonomous
-    final public static double autonomousSpeed = .5;
+    final public static double autonomousSpeed = .35;
     final public static double autonomousTurnSpeed = .3;
 
     //Arm
@@ -47,9 +47,9 @@ public final class Constants {
     final public static double hangarSpeed = .25;
 
     //arm speeds part 2 if we cannot use the copy and pasted code
-    final public static double armRise = 1.0;
+    final public static double armRise = .2;
     final public static double armDescend = -.4;
-    final public static double armControlledDescent = 0.2;
+    final public static double armControlledDescent = -0.05;
 
    
     //hangar stuff

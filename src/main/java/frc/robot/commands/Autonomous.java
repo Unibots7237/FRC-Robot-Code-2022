@@ -33,13 +33,71 @@ public class Autonomous extends CommandBase {
 
     private AnalogGyro gyro;
 
-    public boolean movingForward;
-    public boolean starting; //when it moves back in the beginning
-    public boolean turn180;
-    public boolean shootIntake;
- 
+
+    //general
+    public boolean starting;
+
+    //two ball auto
+    public boolean twoballDriveForward = false;
+    public boolean twoballTurn180 = false;
+    public boolean twoballReturn = false;
+
+    
+
      //true makes it turn right 90 degrees, false means no turn
     private boolean startPathweaver;
+
+    public void oneBallAuto(double leftEncoderValue, double rightEncoderValue) {
+        this.intakesub.intake.set(-Constants.intakeSpeed);
+        if (leftEncoderValue >= -15000) {
+            autonomoussub.driveLeft(-Constants.autonomousSpeed);
+        }
+        if (rightEncoderValue <= 15000) {
+            autonomoussub.driveRight(Constants.autonomousSpeed);
+        }
+        if (leftEncoderValue < -15000 && rightEncoderValue > 15000) {
+            this.starting = false;
+        }
+    }
+    
+
+    public void twoBallAuto(double leftEncoderValue, double rightEncoderValue) {
+        if (this.twoballDriveForward) {
+            this.intakesub.intake.set(Constants.intakeSpeed);
+            if (leftEncoderValue <= 15000) {
+                autonomoussub.driveLeft(Constants.autonomousSpeed);
+            }
+            if (rightEncoderValue >= -15000) {
+                autonomoussub.driveRight(-Constants.autonomousSpeed);
+            }
+            if (leftEncoderValue > 15000 && rightEncoderValue < -15000) {
+                this.twoballDriveForward = false;
+                this.twoballTurn180 = true;
+            }
+        }
+        if (this.twoballTurn180) {
+            if (gyro.getAngle() < 180) {
+                this.autonomoussub.driveRight(Constants.autonomousTurnSpeed);
+            }
+            if (gyro.getAngle() >= 180) {
+                this.twoballTurn180 = false;
+                this.twoballReturn = true;
+            }
+        }
+        if (this.twoballReturn) {
+            this.intakesub.intake.set(-Constants.intakeSpeed);
+            if (leftEncoderValue >= -20000) {
+                autonomoussub.driveLeft(-Constants.autonomousSpeed);
+            }
+            if (rightEncoderValue <=20000) {
+                autonomoussub.driveRight(Constants.autonomousSpeed);
+            }
+            if (leftEncoderValue < -15000 && rightEncoderValue > 15000) {
+                this.starting = false;
+                this.twoballReturn = false;
+            }
+        }
+    }
 
     public Autonomous(AutonomousSub autonomoussub1, DrivebaseSub drivebasesub1, Intake intake1) {
         autonomoussub = autonomoussub1;
@@ -57,84 +115,29 @@ public class Autonomous extends CommandBase {
     public void initialize() {
         leftEncoder.setQuadraturePosition(0,0);
         rightEncoder.setQuadraturePosition(0,0);
-        this.movingForward = true;
         this.starting = true;
-        this.startPathweaver = false;
-        this.turn180 = false;
-        this.shootIntake = false;
+        this.twoballTurn180 = false;
+        this.twoballDriveForward = false;
+        this.twoballReturn = false;
     }
   
     // Called every time the scheduler runs while the command is scheduled.
     @Override
     public void execute() {
-        
-        double leftEncoderValue = leftEncoder.getQuadraturePosition();
-        double rightEncoderValue = -rightEncoder.getQuadraturePosition();
-
-        SmartDashboard.putNumber("leftEncoder_auto", leftEncoderValue);
-        SmartDashboard.putNumber("rightEncoder_auto", rightEncoderValue);
-
-        
-
-        if (starting) {
-            gyro.reset();
-            if (leftEncoderValue > 5000) {
-                this.drivebasesub.driveLeft(-Constants.autonomousSpeed);
-            }
-            if (rightEncoderValue > 5000) {
-                this.drivebasesub.driveRight(Constants.autonomousSpeed);
-            }
-            if (leftEncoderValue >= 5000 && rightEncoderValue >= 5000) {
-                this.drivebasesub.encoderLeft.setQuadraturePosition(0, 0);
-                this.drivebasesub.encoderRight.setQuadraturePosition(0, 0);
-                shootIntake = true;
-            }
-            if (shootIntake) {
-                timer.reset();
-                timer.start();
-                if (timer.get() <= 1.0) {
-                    this.intakesub.autonomousShoot();
-                }
-                if (timer.get() > 1.0) {
-                    timer.stop();
-                    timer.reset();
-                    turn180 = true;
-                }
-            }
-            if (turn180) {
-                if (gyro.getAngle() < 180) {
-                    this.autonomoussub.driveRight(Constants.autonomousTurnSpeed);
-                }
-                if (gyro.getAngle() >= 180) {
-                    gyro.reset();
-                    starting = false;
-                    startPathweaver = true;
-                }
-            }
-         }
-         /*
-        if (startPathweaver) {
-            if (leftEncoderValue > -20000) {
-                this.drivebasesub.driveLeft(-Constants.autonomousSpeed);
-            }
-            if (rightEncoderValue > -20000) {
-                this.drivebasesub.driveRight(Constants.autonomousSpeed);
-            }
-            if (leftEncoderValue <= -20000 && rightEncoderValue <= -20000) {
-                this.drivebasesub.encoderLeft.setQuadraturePosition(0, 0);
-                this.drivebasesub.encoderRight.setQuadraturePosition(0, 0);
-                starting = false;
-            }
+        double leftEncoderValue = this.leftEncoder.getQuadraturePosition();
+        double rightEncoderValue = this.rightEncoder.getQuadraturePosition();
+        if (this.starting) {
+            oneBallAuto(leftEncoderValue, rightEncoderValue);
         }
-        */
     }
 
     // Called once the command ends or is interrupted.
     @Override
     public void end(boolean interrupted) {
-        //leftEncoder.setQuadraturePosition(0,0);
-        //rightEncoder.setQuadraturePosition(0,0);
-        this.movingForward = true;
+        this.starting = false;
+        this.twoballTurn180 = false;
+        this.twoballDriveForward = false;
+        this.twoballReturn = false;
     }
   
     // Returns true when the command should end.

@@ -33,7 +33,9 @@ public class ArmCommand extends CommandBase {
   // Called when the command is initially scheduled.
   @Override
   public void initialize(){
-      
+    this.arm.dropDown = false;
+    this.arm.controlledDescent = false;
+    this.arm.timer.reset();
   }
 
   // Called every time the scheduler runs while the command is scheduled.
@@ -44,7 +46,12 @@ public class ArmCommand extends CommandBase {
 
   // Called once the command ends or is interrupted.
   @Override
-  public void end(boolean interrupted) {}
+  public void end(boolean interrupted) {
+    this.arm.dropDown = false;
+    this.arm.controlledDescent = false;
+    this.arm.timer.stop();
+    this.arm.timer.reset();
+  }
 
   // Returns true when the command should end.
   @Override

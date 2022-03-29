@@ -1,12 +1,14 @@
 package frc.robot.subsystems;
 
 import com.revrobotics.CANSparkMax;
+import com.revrobotics.CANSparkMax.IdleMode;
 import com.revrobotics.CANSparkMaxLowLevel.MotorType;
 
 import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.XboxController;
 import edu.wpi.first.wpilibj.motorcontrol.PWMSparkMax;
 import edu.wpi.first.wpilibj.motorcontrol.Spark;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants;
 import frc.robot.RobotContainer;
@@ -19,52 +21,82 @@ public class Arm extends SubsystemBase {
     public static boolean dropDown = false;
     public static boolean controlledDescent = false;
 
-    private Timer timer = new Timer();
+    public static Timer timer = new Timer();
 
     public boolean armUp = false;
     public double lastBurstTime = 0;
 
+    public void armRise() {
+      arm.set(Constants.armRise);
+    } 
+    public void armDescend() {
+      arm.set(Constants.armDescend);
+    }
+    public void armControlledDescent() {
+      arm.set(Constants.armControlledDescent);
+    }
+
     public void armControl() {
+      arm.setIdleMode(IdleMode.kBrake);
       if (xboxcontroller.getBButton()) {
+        //arm.set(Constants.armDescend);
+        
+
         if (!dropDown) {
-          timer.reset();
-          timer.start();  
-          dropDown = true;         
+          timer.start();
+          dropDown = true;
         }
+        
+        
       }
       if (xboxcontroller.getXButton()) {
+        //arm.set(Constants.armRise);
+              
         if (!dropDown) {
           arm.set(Constants.armRise);   
         }
-      }
-      if (!xboxcontroller.getBButton() && !xboxcontroller.getXButton()) {
-        arm.set(0);
+        
       }
 
-      if (dropDown) {
-        if (timer.get() <= .05) {
+      
+      if (!xboxcontroller.getBButton() && !xboxcontroller.getXButton()) {
+        //arm.set(0);
+        
+        if (!dropDown) {
+          arm.set(0);
+        }
+        
+      }
+
+      if (xboxcontroller.getRightStickButton()) {
+        dropDown = false;
+        controlledDescent = false;
+      }
+
+      
+      if (dropDown && !controlledDescent) {
+        if (!timer.hasElapsed(.075)) {
           arm.set(Constants.armDescend);
         }
-        if (timer.get() > .05) {
-          dropDown = false;
+        if (timer.hasElapsed(.075)) {
           controlledDescent = true;
         }
       }
       if (controlledDescent) {
         timer.reset();
-        if (timer.get() <= 1.0) {
+        if (!timer.hasElapsed(1.0)) {
           arm.set(Constants.armControlledDescent);
         }
-        if (timer.get() > 1.0) {
+        if (timer.hasElapsed(1.0)) {
           timer.stop();
           timer.reset();
-          controlledDescent = false;
           dropDown = false;
+          controlledDescent = false;
         }
       }
 
-      /*
       
+      /*
       if(armUp){
         if(Timer.getFPGATimestamp() - lastBurstTime < Constants.armTimeUp){
           arm.set(Constants.armTravel);
@@ -93,6 +125,7 @@ public class Arm extends SubsystemBase {
     } 
     */
   }
+  
 }
 
       
