@@ -41,6 +41,7 @@ public class Autonomous extends CommandBase {
     public boolean twoballDriveForward = false;
     public boolean twoballTurn180 = false;
     public boolean twoballReturn = false;
+    public boolean twoballShootIntake = false;
 
     
 
@@ -85,17 +86,20 @@ public class Autonomous extends CommandBase {
             }
         }
         if (this.twoballReturn) {
-            this.intakesub.intake.set(-Constants.intakeSpeed);
             if (leftEncoderValue >= -20000) {
                 autonomoussub.driveLeft(-Constants.autonomousSpeed);
             }
             if (rightEncoderValue <=20000) {
                 autonomoussub.driveRight(Constants.autonomousSpeed);
             }
-            if (leftEncoderValue < -15000 && rightEncoderValue > 15000) {
+            if (leftEncoderValue < -20000 && rightEncoderValue > 20000) {
                 this.starting = false;
                 this.twoballReturn = false;
+                this.twoballShootIntake = true;
             }
+        }
+        if (this.twoballShootIntake) {
+            this.intakesub.intake.set(-Constants.intakeSpeed);
         }
     }
 
@@ -119,6 +123,7 @@ public class Autonomous extends CommandBase {
         this.twoballTurn180 = false;
         this.twoballDriveForward = false;
         this.twoballReturn = false;
+        this.twoballShootIntake = false;
     }
   
     // Called every time the scheduler runs while the command is scheduled.
@@ -138,6 +143,7 @@ public class Autonomous extends CommandBase {
         this.twoballTurn180 = false;
         this.twoballDriveForward = false;
         this.twoballReturn = false;
+        this.twoballShootIntake = false;
     }
   
     // Returns true when the command should end.
