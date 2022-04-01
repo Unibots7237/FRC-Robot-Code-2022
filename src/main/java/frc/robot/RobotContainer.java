@@ -6,11 +6,15 @@ package frc.robot;
 
 import javax.sound.midi.MidiSystem;
 
+import com.ctre.phoenix.motorcontrol.SensorCollection;
 import com.kauailabs.navx.frc.AHRS;
 
+import edu.wpi.first.wpilibj.ADXRS450_Gyro;
 import edu.wpi.first.wpilibj.AnalogGyro;
 import edu.wpi.first.wpilibj.GenericHID;
+import edu.wpi.first.wpilibj.I2C;
 import edu.wpi.first.wpilibj.Joystick;
+import edu.wpi.first.wpilibj.SPI;
 import edu.wpi.first.wpilibj.XboxController;
 import edu.wpi.first.wpilibj.PS4Controller.Button;
 import edu.wpi.first.wpilibj.simulation.XboxControllerSim;
@@ -47,8 +51,11 @@ public class RobotContainer {
 
   public final Intake intakesub = new Intake();
 
-  public final DrivebaseSub drivebasesub = new DrivebaseSub();
+  public final static DrivebaseSub drivebasesub = new DrivebaseSub();
   private final Drivebase drivebasecommand = new Drivebase(drivebasesub);
+
+  public static SensorCollection encoderLeft = new SensorCollection(drivebasesub.leftFrontTalon);
+  public static SensorCollection encoderRight = new SensorCollection(drivebasesub.rightFrontTalon);
 
   private final Arm armsub = new Arm();
   private final ArmCommand armcommand = new ArmCommand(armsub);
@@ -65,12 +72,17 @@ public class RobotContainer {
 
   public static XboxController xboxcontroller = new XboxController(Constants.xboxcontroller);
 
-  public static AnalogGyro gyro = new AnalogGyro(0);
+  public static ADXRS450_Gyro gyro = new ADXRS450_Gyro();
 
   /** The container for the robot. Contains subsystems, OI devices, and commands. */
   public RobotContainer() {
     //Gyro
     gyro.reset();
+    
+
+    //Encoder
+    encoderLeft.setQuadraturePosition(0,0);
+    encoderRight.setQuadraturePosition(0,0);
 
     // Configure the button bindings
     configureButtonBindings();

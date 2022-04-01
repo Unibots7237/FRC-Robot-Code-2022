@@ -12,6 +12,7 @@ import com.kauailabs.navx.frc.AHRS;
 import edu.wpi.first.wpilibj2.command.CommandBase;
 import edu.wpi.first.wpilibj2.command.Subsystem;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
+import edu.wpi.first.wpilibj.ADXRS450_Gyro;
 import edu.wpi.first.wpilibj.AnalogGyro;
 import edu.wpi.first.wpilibj.Joystick;
 import edu.wpi.first.wpilibj.Timer;
@@ -31,7 +32,7 @@ public class Autonomous extends CommandBase {
 
     private Timer timer = new Timer();
 
-    private AnalogGyro gyro;
+    private ADXRS450_Gyro gyro;
 
 
     //general
@@ -40,13 +41,16 @@ public class Autonomous extends CommandBase {
     //two ball auto
     public boolean twoballDriveForward = false;
     public boolean twoballTurn180 = false;
+    public boolean twoballAdjustAngle = false;
     public boolean twoballReturn = false;
-    public boolean twoballShootIntake = false;
 
     
 
      //true makes it turn right 90 degrees, false means no turn
     private boolean startPathweaver;
+
+    //right encoder value is positive when going forward
+    //left encoder value is negative when going forward
 
     public void oneBallAuto(double leftEncoderValue, double rightEncoderValue) {
         this.intakesub.intake.set(-Constants.intakeSpeed);
@@ -65,41 +69,59 @@ public class Autonomous extends CommandBase {
     public void twoBallAuto(double leftEncoderValue, double rightEncoderValue) {
         if (this.twoballDriveForward) {
             this.intakesub.intake.set(Constants.intakeSpeed);
-            if (leftEncoderValue <= 15000) {
+            if (leftEncoderValue >= -15000) {
                 autonomoussub.driveLeft(Constants.autonomousSpeed);
             }
-            if (rightEncoderValue >= -15000) {
+            if (rightEncoderValue <= 15000) {
                 autonomoussub.driveRight(-Constants.autonomousSpeed);
             }
-            if (leftEncoderValue > 15000 && rightEncoderValue < -15000) {
+            if (leftEncoderValue < -15000 && rightEncoderValue > 15000) {
+                System.out.println("done");
                 this.twoballDriveForward = false;
                 this.twoballTurn180 = true;
+                gyro.reset();
+                this.leftEncoder.setQuadraturePosition(0, 0);
+                this.rightEncoder.setQuadraturePosition(0, 0);
             }
         }
         if (this.twoballTurn180) {
             if (gyro.getAngle() < 180) {
                 this.autonomoussub.driveRight(Constants.autonomousTurnSpeed);
+                this.autonomoussub.driveLeft(Constants.autonomousTurnSpeed);
             }
             if (gyro.getAngle() >= 180) {
                 this.twoballTurn180 = false;
+                this.twoballAdjustAngle = true;
+                this.leftEncoder.setQuadraturePosition(0, 0);
+                this.rightEncoder.setQuadraturePosition(0, 0);
+            }
+        }
+         if (this.twoballAdjustAngle) {
+            if (gyro.getAngle() > 180) {
+                this.autonomoussub.driveRight(-Constants.autonomousAdjustAngleSpeed);
+                this.autonomoussub.driveLeft(-Constants.autonomousAdjustAngleSpeed);
+            }
+            if (gyro.getAngle() <= 180) {
+                this.twoballAdjustAngle = false;
                 this.twoballReturn = true;
+                this.leftEncoder.setQuadraturePosition(0, 0);
+                this.rightEncoder.setQuadraturePosition(0, 0);
             }
         }
         if (this.twoballReturn) {
+            this.intakesub.intake.set(-Constants.intakeSpeed);
             if (leftEncoderValue >= -20000) {
-                autonomoussub.driveLeft(-Constants.autonomousSpeed);
+                autonomoussub.driveLeft(Constants.autonomousSpeed);
             }
-            if (rightEncoderValue <=20000) {
-                autonomoussub.driveRight(Constants.autonomousSpeed);
+            if (rightEncoderValue <= 20000) {
+                autonomoussub.driveRight(-Constants.autonomousSpeed);
             }
             if (leftEncoderValue < -20000 && rightEncoderValue > 20000) {
                 this.starting = false;
                 this.twoballReturn = false;
-                this.twoballShootIntake = true;
+                this.leftEncoder.setQuadraturePosition(0, 0);
+                this.rightEncoder.setQuadraturePosition(0, 0);
             }
-        }
-        if (this.twoballShootIntake) {
-            this.intakesub.intake.set(-Constants.intakeSpeed);
         }
     }
 
@@ -110,8 +132,8 @@ public class Autonomous extends CommandBase {
         addRequirements(this.autonomoussub);
         addRequirements(this.drivebasesub);
         addRequirements(this.intakesub);
-        this.leftEncoder = drivebasesub.encoderLeft;
-        this.rightEncoder = drivebasesub.encoderRight;
+        this.leftEncoder = RobotContainer.encoderLeft;
+        this.rightEncoder = RobotContainer.encoderRight;
         this.gyro = RobotContainer.gyro;
     }
     
@@ -119,11 +141,12 @@ public class Autonomous extends CommandBase {
     public void initialize() {
         leftEncoder.setQuadraturePosition(0,0);
         rightEncoder.setQuadraturePosition(0,0);
+        gyro.reset();
         this.starting = true;
         this.twoballTurn180 = false;
-        this.twoballDriveForward = false;
+        this.twoballAdjustAngle = false;
+        this.twoballDriveForward = true;
         this.twoballReturn = false;
-        this.twoballShootIntake = false;
     }
   
     // Called every time the scheduler runs while the command is scheduled.
@@ -131,8 +154,11 @@ public class Autonomous extends CommandBase {
     public void execute() {
         double leftEncoderValue = this.leftEncoder.getQuadraturePosition();
         double rightEncoderValue = this.rightEncoder.getQuadraturePosition();
+        SmartDashboard.putNumber("Left Encoder auto", Robot.m_robotContainer.encoderLeft.getQuadraturePosition());
+        SmartDashboard.putNumber("Right Encoder auto", Robot.m_robotContainer.encoderRight.getQuadraturePosition());
+        SmartDashboard.putNumber("Gyro", Robot.m_robotContainer.gyro.getAngle());
         if (this.starting) {
-            oneBallAuto(leftEncoderValue, rightEncoderValue);
+            twoBallAuto(leftEncoderValue, rightEncoderValue);
         }
     }
 
@@ -141,9 +167,12 @@ public class Autonomous extends CommandBase {
     public void end(boolean interrupted) {
         this.starting = false;
         this.twoballTurn180 = false;
+        this.twoballAdjustAngle = false;
         this.twoballDriveForward = false;
         this.twoballReturn = false;
-        this.twoballShootIntake = false;
+        leftEncoder.setQuadraturePosition(0,0);
+        rightEncoder.setQuadraturePosition(0,0);
+        gyro.reset();
     }
   
     // Returns true when the command should end.

@@ -29,6 +29,7 @@ public final class Constants {
     //autonomous
     final public static double autonomousSpeed = .35;
     final public static double autonomousTurnSpeed = .3;
+    final public static double autonomousAdjustAngleSpeed = .1;
 
     //Arm
     final public static double armHoldUp = 0.08;
