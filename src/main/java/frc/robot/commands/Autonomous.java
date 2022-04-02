@@ -43,6 +43,7 @@ public class Autonomous extends CommandBase {
     public boolean twoballTurn180 = false;
     public boolean twoballAdjustAngle = false;
     public boolean twoballReturn = false;
+    public boolean twoballTaxi = false;
 
     
 
@@ -117,8 +118,22 @@ public class Autonomous extends CommandBase {
                 autonomoussub.driveRight(-Constants.autonomousSpeed);
             }
             if (leftEncoderValue < -20000 && rightEncoderValue > 20000) {
-                this.starting = false;
                 this.twoballReturn = false;
+                this.twoballTaxi = true;
+                this.leftEncoder.setQuadraturePosition(0, 0);
+                this.rightEncoder.setQuadraturePosition(0, 0);
+            }
+        }
+        if (this.twoballTaxi) {
+            if (leftEncoderValue <= 20000) {
+                autonomoussub.driveLeft(-Constants.autonomousSpeed);
+            }
+            if (rightEncoderValue >= -20000) {
+                autonomoussub.driveRight(Constants.autonomousSpeed);
+            }
+            if (leftEncoderValue > 20000 && rightEncoderValue < -20000) {
+                this.starting = false;
+                this.twoballTaxi = false;
                 this.leftEncoder.setQuadraturePosition(0, 0);
                 this.rightEncoder.setQuadraturePosition(0, 0);
             }
