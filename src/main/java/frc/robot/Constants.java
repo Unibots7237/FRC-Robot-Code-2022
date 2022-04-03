@@ -23,8 +23,8 @@ public final class Constants {
     final public static int backLeftTalon = 01;
     final public static int intakeSpark = 00;
     final public static int armSpark = 05;
-    final public static int hangarMotor1 = 00;
-    final public static int hangarMotor2 = 00;
+    final public static int hangarMotor1 = 06;
+    final public static int hangarMotor2 = 07;
 
     //autonomous
     final public static double autonomousSpeed = .35;

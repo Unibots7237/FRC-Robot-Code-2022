@@ -20,12 +20,12 @@ import frc.robot.Robot;
 
 public class HangarSub extends SubsystemBase {
   public CANSparkMax hangarMotor1 = new CANSparkMax(Constants.hangarMotor1, MotorType.kBrushless);
-  public CANSparkMax hangarMotor2 = new CANSparkMax(Constants.hangarMotor2, MotorType.kBrushless);
+  //public CANSparkMax hangarMotor2 = new CANSparkMax(Constants.hangarMotor2, MotorType.kBrushless);
 
   public RelativeEncoder hangarEncoder1 = hangarMotor1.getEncoder();
-  public RelativeEncoder hangarEncoder2 = hangarMotor2.getEncoder();
+  //public RelativeEncoder hangarEncoder2 = hangarMotor2.getEncoder();
 
-  public MotorControllerGroup hangarmotorgroup = new MotorControllerGroup(hangarMotor1, hangarMotor2);
+  //public MotorControllerGroup hangarmotorgroup = new MotorControllerGroup(hangarMotor1, hangarMotor2);
   
 
   XboxController xboxcontroller = Robot.m_robotContainer.xboxcontroller;
@@ -36,7 +36,7 @@ public class HangarSub extends SubsystemBase {
     hangarMotor1.set(move);
   }
   public void hangarMotor2Move(double move) {
-    hangarMotor2.set(move);
+   // hangarMotor2.set(move);
   }
 
 }
