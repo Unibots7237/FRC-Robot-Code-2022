@@ -43,14 +43,14 @@ public class Robot extends TimedRobot {
     m_robotContainer = new RobotContainer();
 
     //trajectory
-    /*
+    
     try {
       Path trajectoryPath = Filesystem.getDeployDirectory().toPath().resolve(trajectoryJSON);
       trajectory = TrajectoryUtil.fromPathweaverJson(trajectoryPath);
    } catch (IOException ex) {
       DriverStation.reportError("Unable to open trajectory: " + trajectoryJSON, ex.getStackTrace());
    }
-   */
+   
   }
 
   /**

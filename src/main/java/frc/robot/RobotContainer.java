@@ -21,6 +21,7 @@ import edu.wpi.first.wpilibj.simulation.XboxControllerSim;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import frc.robot.commands.ArmCommand;
 import frc.robot.commands.Autonomous;
+import frc.robot.commands.AutonomousNoTaxi;
 import frc.robot.commands.Drivebase;
 import frc.robot.commands.ExampleCommand;
 import frc.robot.commands.Hangar;
@@ -69,7 +70,8 @@ public class RobotContainer {
 
   public final AutonomousSub autonomoussub = new AutonomousSub();
   private final Autonomous autonomouscommand = new Autonomous(autonomoussub, drivebasesub, intakesub);
-  private final TwoBallAutonomous twoballautonomouscommand = new TwoBallAutonomous(autonomoussub, drivebasesub, intakesub);
+  private final AutonomousNoTaxi autonomousnotaxicommand = new AutonomousNoTaxi(autonomoussub, drivebasesub, intakesub);
+  private final TwoBallAutonomous twoballautonomouscommand = new TwoBallAutonomous(autonomoussub, drivebasesub, intakesub, armsub);
 
   SendableChooser<Command> m_chooser = new SendableChooser<>();
 
@@ -82,6 +84,7 @@ public class RobotContainer {
   /** The container for the robot. Contains subsystems, OI devices, and commands. */
   public RobotContainer() {
     //Sendable Chooser
+    m_chooser.addOption("One Ball Auto No Taxi", autonomousnotaxicommand);
     m_chooser.setDefaultOption("One Ball Auto", autonomouscommand);
     m_chooser.addOption("Two Ball Auto", twoballautonomouscommand);
 

@@ -46,7 +46,7 @@ public class TwoBallAutonomous extends CommandBase {
     public boolean twoballAdjustAngle = false;
     public boolean raiseArm = false;
     public boolean twoballReturn = false;
-
+    public boolean twoballTaxi = false;
     
 
      //true makes it turn right 90 degrees, false means no turn
@@ -65,7 +65,6 @@ public class TwoBallAutonomous extends CommandBase {
                 autonomoussub.driveRight(-Constants.autonomousSpeed);
             }
             if (leftEncoderValue < -15000 && rightEncoderValue > 15000) {
-                System.out.println("done");
                 this.twoballDriveForward = false;
                 this.twoballTurn180 = true;
                 gyro.reset();
@@ -115,8 +114,23 @@ public class TwoBallAutonomous extends CommandBase {
                 autonomoussub.driveRight(-Constants.autonomousSpeed);
             }
             if (leftEncoderValue < -20000 && rightEncoderValue > 20000) {
-                this.starting = false;
                 this.twoballReturn = false;
+                this.twoballTaxi = false;
+                this.leftEncoder.setQuadraturePosition(0, 0);
+                this.rightEncoder.setQuadraturePosition(0, 0);
+            }
+        }
+        if (this.twoballTaxi) {
+            if (leftEncoderValue >= -15000) {
+                autonomoussub.driveLeft(Constants.autonomousSpeed*.5);
+            }
+            if (rightEncoderValue <= 15000) {
+                autonomoussub.driveRight(-Constants.autonomousSpeed*.5);
+            }
+            if (leftEncoderValue < -15000 && rightEncoderValue > 15000) {
+                this.starting = false;
+                this.twoballTaxi = false;
+                gyro.reset();
                 this.leftEncoder.setQuadraturePosition(0, 0);
                 this.rightEncoder.setQuadraturePosition(0, 0);
             }
@@ -148,6 +162,7 @@ public class TwoBallAutonomous extends CommandBase {
         this.twoballDriveForward = true;
         this.raiseArm = false;
         this.twoballReturn = false;
+        this.twoballTaxi = false;
     }
   
     // Called every time the scheduler runs while the command is scheduled.
@@ -173,6 +188,7 @@ public class TwoBallAutonomous extends CommandBase {
         this.twoballDriveForward = false;
         this.raiseArm = false;
         this.twoballReturn = false;
+        this.twoballTaxi = false;
         leftEncoder.setQuadraturePosition(0,0);
         rightEncoder.setQuadraturePosition(0,0);
         gyro.reset();
