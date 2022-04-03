@@ -35,15 +35,8 @@ public class Autonomous extends CommandBase {
     private ADXRS450_Gyro gyro;
 
 
-    //general
+    //one ball auto
     public boolean starting;
-
-    //two ball auto
-    public boolean twoballDriveForward = false;
-    public boolean twoballTurn180 = false;
-    public boolean twoballAdjustAngle = false;
-    public boolean twoballReturn = false;
-    public boolean twoballTaxi = false;
 
     
 
@@ -65,80 +58,6 @@ public class Autonomous extends CommandBase {
             this.starting = false;
         }
     }
-    
-
-    public void twoBallAuto(double leftEncoderValue, double rightEncoderValue) {
-        if (this.twoballDriveForward) {
-            this.intakesub.intake.set(Constants.intakeSpeed);
-            if (leftEncoderValue >= -15000) {
-                autonomoussub.driveLeft(Constants.autonomousSpeed);
-            }
-            if (rightEncoderValue <= 15000) {
-                autonomoussub.driveRight(-Constants.autonomousSpeed);
-            }
-            if (leftEncoderValue < -15000 && rightEncoderValue > 15000) {
-                System.out.println("done");
-                this.twoballDriveForward = false;
-                this.twoballTurn180 = true;
-                gyro.reset();
-                this.leftEncoder.setQuadraturePosition(0, 0);
-                this.rightEncoder.setQuadraturePosition(0, 0);
-            }
-        }
-        if (this.twoballTurn180) {
-            if (gyro.getAngle() < 180) {
-                this.autonomoussub.driveRight(Constants.autonomousTurnSpeed);
-                this.autonomoussub.driveLeft(Constants.autonomousTurnSpeed);
-            }
-            if (gyro.getAngle() >= 180) {
-                this.twoballTurn180 = false;
-                this.twoballAdjustAngle = true;
-                this.leftEncoder.setQuadraturePosition(0, 0);
-                this.rightEncoder.setQuadraturePosition(0, 0);
-            }
-        }
-         if (this.twoballAdjustAngle) {
-            if (gyro.getAngle() > 180) {
-                this.autonomoussub.driveRight(-Constants.autonomousAdjustAngleSpeed);
-                this.autonomoussub.driveLeft(-Constants.autonomousAdjustAngleSpeed);
-            }
-            if (gyro.getAngle() <= 180) {
-                this.twoballAdjustAngle = false;
-                this.twoballReturn = true;
-                this.leftEncoder.setQuadraturePosition(0, 0);
-                this.rightEncoder.setQuadraturePosition(0, 0);
-            }
-        }
-        if (this.twoballReturn) {
-            this.intakesub.intake.set(-Constants.intakeSpeed);
-            if (leftEncoderValue >= -20000) {
-                autonomoussub.driveLeft(Constants.autonomousSpeed);
-            }
-            if (rightEncoderValue <= 20000) {
-                autonomoussub.driveRight(-Constants.autonomousSpeed);
-            }
-            if (leftEncoderValue < -20000 && rightEncoderValue > 20000) {
-                this.twoballReturn = false;
-                this.twoballTaxi = true;
-                this.leftEncoder.setQuadraturePosition(0, 0);
-                this.rightEncoder.setQuadraturePosition(0, 0);
-            }
-        }
-        if (this.twoballTaxi) {
-            if (leftEncoderValue <= 20000) {
-                autonomoussub.driveLeft(-Constants.autonomousSpeed);
-            }
-            if (rightEncoderValue >= -20000) {
-                autonomoussub.driveRight(Constants.autonomousSpeed);
-            }
-            if (leftEncoderValue > 20000 && rightEncoderValue < -20000) {
-                this.starting = false;
-                this.twoballTaxi = false;
-                this.leftEncoder.setQuadraturePosition(0, 0);
-                this.rightEncoder.setQuadraturePosition(0, 0);
-            }
-        }
-    }
 
     public Autonomous(AutonomousSub autonomoussub1, DrivebaseSub drivebasesub1, Intake intake1) {
         autonomoussub = autonomoussub1;
@@ -158,10 +77,6 @@ public class Autonomous extends CommandBase {
         rightEncoder.setQuadraturePosition(0,0);
         gyro.reset();
         this.starting = true;
-        this.twoballTurn180 = false;
-        this.twoballAdjustAngle = false;
-        this.twoballDriveForward = true;
-        this.twoballReturn = false;
     }
   
     // Called every time the scheduler runs while the command is scheduled.
@@ -173,7 +88,7 @@ public class Autonomous extends CommandBase {
         SmartDashboard.putNumber("Right Encoder auto", Robot.m_robotContainer.encoderRight.getQuadraturePosition());
         SmartDashboard.putNumber("Gyro", Robot.m_robotContainer.gyro.getAngle());
         if (this.starting) {
-            twoBallAuto(leftEncoderValue, rightEncoderValue);
+            oneBallAuto(leftEncoderValue, rightEncoderValue);
         }
     }
 
@@ -181,10 +96,6 @@ public class Autonomous extends CommandBase {
     @Override
     public void end(boolean interrupted) {
         this.starting = false;
-        this.twoballTurn180 = false;
-        this.twoballAdjustAngle = false;
-        this.twoballDriveForward = false;
-        this.twoballReturn = false;
         leftEncoder.setQuadraturePosition(0,0);
         rightEncoder.setQuadraturePosition(0,0);
         gyro.reset();

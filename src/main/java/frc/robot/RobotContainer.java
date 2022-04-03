@@ -18,12 +18,14 @@ import edu.wpi.first.wpilibj.SPI;
 import edu.wpi.first.wpilibj.XboxController;
 import edu.wpi.first.wpilibj.PS4Controller.Button;
 import edu.wpi.first.wpilibj.simulation.XboxControllerSim;
+import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import frc.robot.commands.ArmCommand;
 import frc.robot.commands.Autonomous;
 import frc.robot.commands.Drivebase;
 import frc.robot.commands.ExampleCommand;
 import frc.robot.commands.Hangar;
 import frc.robot.commands.IntakeCommand;
+import frc.robot.commands.TwoBallAutonomous;
 import frc.robot.subsystems.Arm;
 //import frc.robot.commands.IntakeCommand;
 import frc.robot.subsystems.AutonomousSub;
@@ -67,6 +69,9 @@ public class RobotContainer {
 
   public final AutonomousSub autonomoussub = new AutonomousSub();
   private final Autonomous autonomouscommand = new Autonomous(autonomoussub, drivebasesub, intakesub);
+  private final TwoBallAutonomous twoballautonomouscommand = new TwoBallAutonomous(autonomoussub, drivebasesub, intakesub);
+
+  SendableChooser<Command> m_chooser = new SendableChooser<>();
 
   private final IntakeCommand intakecommand = new IntakeCommand(intakesub);
 
@@ -76,6 +81,10 @@ public class RobotContainer {
 
   /** The container for the robot. Contains subsystems, OI devices, and commands. */
   public RobotContainer() {
+    //Sendable Chooser
+    m_chooser.setDefaultOption("One Ball Auto", autonomouscommand);
+    m_chooser.addOption("Two Ball Auto", twoballautonomouscommand);
+
     //Gyro
     gyro.reset();
     
@@ -108,6 +117,6 @@ public class RobotContainer {
    */
   public Command getAutonomousCommand() {
     // An ExampleCommand will run in autonomous
-    return autonomouscommand;
+    return m_chooser.getSelected();
   }
 }

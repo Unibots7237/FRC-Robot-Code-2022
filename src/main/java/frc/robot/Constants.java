@@ -42,6 +42,8 @@ public final class Constants {
     final public static boolean burstMode = false;
     final public static double autoStart = 0;
     final public static boolean goForAuto = false;
+        //arm values for autonomous
+        final public static double armRiseEncoder = 1000;
 
     //motor speeds
     final public static double intakeSpeed = 1;
